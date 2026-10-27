@@ -1,0 +1,42 @@
+# Déploiement GitHub Pages : publie le site à chaque mise à jour de main.
+# Réglage requis une seule fois : Settings → Pages → Source : « GitHub Actions ».
+name: Déployer sur GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      # on ne publie que le site (pas le README, ni les dossiers de skills)
+      - name: Préparer le site
+        run: |
+          mkdir _site
+          cp -r index.html favicon.svg robots.txt css js vendor assets _site/
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
