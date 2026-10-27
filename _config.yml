@@ -1,0 +1,8 @@
+# Build GitHub Pages (Jekyll) : on ne publie que le site.
+title: Salon Beleza
+exclude:
+  - README.md
+  - skills-lock.json
+  - .agents
+  - .claude
+  - .gitignore
